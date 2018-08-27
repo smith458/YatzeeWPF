@@ -55,16 +55,15 @@ namespace Yatzee
     public static int ScoreSmallStraight(int[] dieValues)
     {
       bool straight = true;
-      HashSet<int> set =new HashSet<int>(dieValues);
-      int[] uniqueValues = set.ToArray();
-      if (set.Count == 4)
+      int[] uniqueValues = dieValues.Distinct().ToArray();
+      if (uniqueValues.Length == 4)
       {
         for (int x = 1; x < dieValues.Length; x++)
         {
           straight = straight && (uniqueValues[x] - uniqueValues[x - 1] == 1);
         }
       }
-      else if (set.Count == 5)
+      else if (uniqueValues.Length == 5)
       {
         bool straightLow = true;
         for (int x = 1; x < dieValues.Length - 1; x++)
@@ -107,7 +106,7 @@ namespace Yatzee
 
     public static int ScoreYatzee(int[] dieValues)
     {
-      return new HashSet<int>(dieValues).Count == 1 ? 50 : 0;
+      return dieValues.Distinct().Count() == 1 ? 50 : 0;
     }
   }
 }

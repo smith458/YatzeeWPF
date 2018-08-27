@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design.Serialization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -62,25 +63,20 @@ namespace Yatzee
       return _rand.Next(1, 7);
     }
 
+    public ICommand RollCommand => new DelegateCommand(RollDice);
+
     public void RollDice()
     {
-      Dice = Dice.Select(RollIfNotHeld).ToArray();
+      //Dice = Dice.Select(RollIfNotHeld).ToArray();
+      Array.ForEach(Dice, RollIfNotHeld);
       Roll += 1;
     }
 
-    public Die RollIfNotHeld(Die d)
+    public void RollIfNotHeld(Die d)
     {
       d.Value = d.Hold ? d.Value : randDieVal();
-      return d;
     }
 
-    public void HoldDie(Die d)
-    {
-      d.Hold = !d.Hold;
-      OnPropertyChanged(nameof(Dice));
-    }
-
-    public ICommand RollCommand => new DelegateCommand(RollDice);
-    public ICommand HoldCommand => new ParameterCommand<Die>(HoldDie);
+    
   }
 }

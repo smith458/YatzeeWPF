@@ -59,6 +59,7 @@
     <Compile Include="HoldToStringConverter.cs" />
     <Compile Include="ObservableObject.cs" />
     <Compile Include="ParameterCommand.cs" />
+    <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Scoring.cs" />
     <Compile Include="ViewModel.cs" />
     <Page Include="MainWindow.xaml">
