@@ -1,4 +1,4 @@
-﻿<Window x:Class="Yatzee.MainWindow"
+<Window x:Class="Yatzee.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -20,6 +20,11 @@
       <ColumnDefinition Width="Auto"></ColumnDefinition>
     </Grid.ColumnDefinitions>
     <ItemsControl Name="DiceItems" Grid.Row="0" Grid.Column="0" ItemsSource="{Binding Dice}" >
+      <ItemsControl.ItemsPanel>
+        <ItemsPanelTemplate>
+          <StackPanel Orientation="Horizontal"></StackPanel>
+        </ItemsPanelTemplate>
+      </ItemsControl.ItemsPanel>
       <ItemsControl.ItemTemplate>
         <DataTemplate>
           <StackPanel Orientation="Horizontal">
