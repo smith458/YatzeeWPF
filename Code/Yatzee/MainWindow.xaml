@@ -12,14 +12,14 @@
   </Window.Resources>
   <Grid>
     <Grid.RowDefinitions>
-      <RowDefinition></RowDefinition>
-      <RowDefinition></RowDefinition>
+      <RowDefinition Height="Auto"></RowDefinition>
+      <RowDefinition Height="Auto"></RowDefinition>
     </Grid.RowDefinitions>
     <Grid.ColumnDefinitions>
-      <ColumnDefinition></ColumnDefinition>
-      <ColumnDefinition></ColumnDefinition>
+      <ColumnDefinition Width="Auto"></ColumnDefinition>
+      <ColumnDefinition Width="Auto"></ColumnDefinition>
     </Grid.ColumnDefinitions>
-    <ItemsControl ItemsSource="{Binding Dice}" >
+    <ItemsControl Grid.Row="0" Grid.Column="0" ItemsSource="{Binding Dice}" >
       <ItemsControl.ItemTemplate>
         <DataTemplate>
           <StackPanel Orientation="Horizontal">
@@ -34,5 +34,14 @@
       <Label Content="Roll:"/>
       <Label Content="{Binding Roll}"/>
     </StackPanel>
+    <ItemsControl Grid.Row="0" Grid.Column="1" ItemsSource="{Binding OptionsAvailable}">
+      <ItemsControl.ItemTemplate>
+        <DataTemplate>
+          <StackPanel>
+            <Button Content="{Binding}"></Button>
+          </StackPanel>
+        </DataTemplate>
+      </ItemsControl.ItemTemplate>
+    </ItemsControl>
   </Grid>
 </Window>

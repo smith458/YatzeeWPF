@@ -12,6 +12,7 @@ namespace Yatzee
     private Die[] _dice = new Die[5];
     private Random _rand;
     private int _roll;
+    private Dictionary<string, int> _scoreCard = new Dictionary<string, int>();
 
     public Die[] Dice
     {
@@ -31,6 +32,22 @@ namespace Yatzee
         _roll = value;
         OnPropertyChanged(nameof(Roll));
       }
+    }
+
+    public Dictionary<string, int> ScoreCard
+    {
+      get => _scoreCard;
+      set
+      {
+        _scoreCard = value;
+        OnPropertyChanged(nameof(ScoreCard));
+        OnPropertyChanged(nameof(OptionsAvailable));
+      }
+    }
+
+    public IEnumerable<string> OptionsAvailable
+    {
+      get => Scoring.ScoreOptions.Keys.Except(ScoreCard.Keys);
     }
 
     public ViewModel()
@@ -55,11 +72,6 @@ namespace Yatzee
     {
       d.Value = d.Hold ? d.Value : randDieVal();
       return d;
-    }
-
-    public string someName(bool hold)
-    {
-      return hold ? "Hold" : "Unhold";
     }
 
     public void HoldDie(int index)

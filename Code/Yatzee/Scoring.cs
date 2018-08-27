@@ -56,11 +56,12 @@ namespace Yatzee
     {
       bool straight = true;
       HashSet<int> set =new HashSet<int>(dieValues);
+      int[] uniqueValues = set.ToArray();
       if (set.Count == 4)
       {
         for (int x = 1; x < dieValues.Length; x++)
         {
-          straight = straight && (dieValues[x] - dieValues[x - 1] == 1);
+          straight = straight && (uniqueValues[x] - uniqueValues[x - 1] == 1);
         }
       }
       else if (set.Count == 5)
@@ -77,7 +78,7 @@ namespace Yatzee
           straightHigh = straightHigh && (dieValues[x] - dieValues[x - 1] == 1);
         }
 
-        straight = straight && (straightHigh || straightLow);
+        straight = (straightHigh || straightLow);
       }
       else
       {
