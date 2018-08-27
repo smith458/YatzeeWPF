@@ -1,9 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel.Design.Serialization;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace Yatzee
@@ -13,7 +12,7 @@ namespace Yatzee
     private Die[] _dice = new Die[5];
     private Random _rand;
     private int _roll;
-    private Dictionary<string, int> _scoreCard = new Dictionary<string, int>();
+    private ObservableCollection<ScoreItem> _scoreCard = new ObservableCollection<ScoreItem>();
 
     public Die[] Dice
     {
@@ -35,7 +34,7 @@ namespace Yatzee
       }
     }
 
-    public Dictionary<string, int> ScoreCard
+    public ObservableCollection<ScoreItem> ScoreCard
     {
       get => _scoreCard;
       set
@@ -48,7 +47,7 @@ namespace Yatzee
 
     public IEnumerable<string> OptionsAvailable
     {
-      get => Scoring.ScoreOptions.Keys.Except(ScoreCard.Keys);
+      get => Scoring.ScoreOptions.Keys.Except(ScoreCard.Select(x => x.Name).ToArray());
     }
 
     public ViewModel()
@@ -56,6 +55,7 @@ namespace Yatzee
       Dice = Dice.Select((d, i) => new Die()).ToArray();
       _rand = new Random();
       Roll = 0;
+      _scoreCard.CollectionChanged += notifyOptionsAvailable;
     }
 
     private int randDieVal()
@@ -67,7 +67,6 @@ namespace Yatzee
 
     public void RollDice()
     {
-      //Dice = Dice.Select(RollIfNotHeld).ToArray();
       Array.ForEach(Dice, RollIfNotHeld);
       Roll += 1;
     }
@@ -77,6 +76,16 @@ namespace Yatzee
       d.Value = d.Hold ? d.Value : randDieVal();
     }
 
-    
+    public ICommand ScoreCommand => new ParameterCommand<string>(ScoreDice);
+
+    public void ScoreDice(string option)
+    {
+      int[] dieValues = Dice.Select(x => x.Value).ToArray();
+      int score = Scoring.ScoreOptions[option](dieValues);
+      ScoreCard.Add(new ScoreItem(option, score, 1));
+    }
+
+    public void notifyOptionsAvailable(object sender, NotifyCollectionChangedEventArgs e) => OnPropertyChanged(nameof(OptionsAvailable));
+
   }
 }
