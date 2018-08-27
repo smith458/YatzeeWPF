@@ -52,7 +52,7 @@ namespace Yatzee
 
     public ViewModel()
     {
-      Dice = Dice.Select((d, i) => new Die(new ParameterCommand<int>(HoldDie, i))).ToArray();
+      Dice = Dice.Select((d, i) => new Die()).ToArray();
       _rand = new Random();
       Roll = 0;
     }
@@ -74,11 +74,13 @@ namespace Yatzee
       return d;
     }
 
-    public void HoldDie(int index)
+    public void HoldDie(Die d)
     {
-      Dice[index].Hold = !Dice[index].Hold;
+      d.Hold = !d.Hold;
+      OnPropertyChanged(nameof(Dice));
     }
 
     public ICommand RollCommand => new DelegateCommand(RollDice);
+    public ICommand HoldCommand => new ParameterCommand<Die>(HoldDie);
   }
 }

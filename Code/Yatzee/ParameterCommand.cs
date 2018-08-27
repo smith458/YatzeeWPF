@@ -6,17 +6,15 @@ namespace Yatzee
   public class ParameterCommand<T> : ICommand
   {
     private readonly Action<T> _action;
-    private readonly T _index;
 
-    public ParameterCommand(Action<T> action, T index)
+    public ParameterCommand(Action<T> action)
     {
       _action = action;
-      _index = index;
     }
 
     public void Execute(object parameter)
     {
-      _action?.Invoke(_index);
+      _action?.Invoke((T) parameter);
     }
 
     public bool CanExecute(object parameter)

@@ -19,12 +19,14 @@
       <ColumnDefinition Width="Auto"></ColumnDefinition>
       <ColumnDefinition Width="Auto"></ColumnDefinition>
     </Grid.ColumnDefinitions>
-    <ItemsControl Grid.Row="0" Grid.Column="0" ItemsSource="{Binding Dice}" >
+    <ItemsControl Name="DiceItems" Grid.Row="0" Grid.Column="0" ItemsSource="{Binding Dice}" >
       <ItemsControl.ItemTemplate>
         <DataTemplate>
           <StackPanel Orientation="Horizontal">
             <Label Content="{Binding Value}" />
-            <Button Content="{Binding Hold, Converter={StaticResource HoldConverter}}" Command="{Binding HoldCommand}" />
+            <Button Content="{Binding Hold, Converter={StaticResource HoldConverter}}"
+                    Command="{Binding DataContext.HoldCommand, ElementName=DiceItems}"
+                    CommandParameter="{Binding Path=.}" />
           </StackPanel>
         </DataTemplate>
       </ItemsControl.ItemTemplate>

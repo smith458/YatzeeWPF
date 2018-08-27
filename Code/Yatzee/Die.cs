@@ -11,9 +11,8 @@ namespace Yatzee
   {
     private int _value;
 
-    public Die(ICommand holdCommand, int value = 1, bool hold = false)
+    public Die( int value = 1, bool hold = false)
     {
-      HoldCommand = holdCommand;
       Value = value;
       Hold = hold;
     }
@@ -25,6 +24,5 @@ namespace Yatzee
     }
 
     public bool Hold { get; set; }
-    public ICommand HoldCommand { get; set; }
   }
 }
