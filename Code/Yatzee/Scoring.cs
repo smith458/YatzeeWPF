@@ -4,30 +4,31 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Navigation;
+using Yatzee.Annotations;
 
 namespace Yatzee
 {
+  public delegate int ScoringFunc(int[] dieValues);
+
   public static class Scoring
   {
-    public static readonly Dictionary<string, ScoringFunc> ScoreOptions = new Dictionary<string, ScoringFunc>()
+    public static readonly CategoryItem[] ScoreCategories = new CategoryItem[]
     {
-      {"Ones", SumDieValue(1) },
-      {"Twos", SumDieValue(2) },
-      {"Threes", SumDieValue(3) },
-      {"Fours", SumDieValue(4) },
-      {"Fives", SumDieValue(5) },
-      {"Sixs", SumDieValue(6) },
-      {"Three of a Kind", ScoreOfAKind(3) },
-      {"Four of a Kind", ScoreOfAKind(4) },
-      {"Small Straight", ScoreSmallStraight },
-      {"Large Straight", ScoreLargeStraight },
-      {"Full House", ScoreFullHouse },
-      {"Yatzee", ScoreYatzee },
-      {"Chance", SumDie },
+      new CategoryItem("Ones", SumDieValue(1), 0),
+      new CategoryItem("Twos", SumDieValue(2), 1 ),
+      new CategoryItem("Threes", SumDieValue(3), 2 ),
+      new CategoryItem("Fours", SumDieValue(4), 3 ),
+      new CategoryItem("Fives", SumDieValue(5), 4 ),
+      new CategoryItem("Sixs", SumDieValue(6), 5 ),
+      new CategoryItem("Three of a Kind", ScoreOfAKind(3), 6 ),
+      new CategoryItem("Four of a Kind", ScoreOfAKind(4), 7 ),
+      new CategoryItem("Small Straight", ScoreSmallStraight, 8 ),
+      new CategoryItem("Large Straight", ScoreLargeStraight, 9 ),
+      new CategoryItem("Full House", ScoreFullHouse, 10 ),
+      new CategoryItem("Yatzee", ScoreYatzee, 11 ),
+      new CategoryItem("Chance", SumDie, 12 ),
 
     };
-
-    public delegate int ScoringFunc(int[] dieValues);
 
     public static ScoringFunc SumDieValue(int val)
     {

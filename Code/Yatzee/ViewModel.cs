@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Windows;
 using System.Windows.Input;
+using Yatzee.Annotations;
 
 namespace Yatzee
 {
@@ -41,18 +43,16 @@ namespace Yatzee
       {
         _scoreCard = value;
         OnPropertyChanged(nameof(ScoreCard));
-        OnPropertyChanged(nameof(OptionsAvailable));
+        OnPropertyChanged(nameof(CategoriesAvailable));
       }
     }
 
-    public IEnumerable<string> OptionsAvailable
-    {
-      get => Scoring.ScoreOptions.Keys.Except(ScoreCard.Select(x => x.Name).ToArray());
-    }
+    public IEnumerable<string> CategoriesAvailable =>
+      Scoring.ScoreCategories.Select(x => x.Name).Except(ScoreCard.Select(x => x.Name).ToArray());
 
     public ViewModel()
     {
-      Dice = Dice.Select((d, i) => new Die()).ToArray();
+      Dice = Dice.Select((d, i) => new Die(0)).ToArray();
       _rand = new Random();
       Roll = 0;
       _scoreCard.CollectionChanged += notifyOptionsAvailable;
@@ -67,8 +67,23 @@ namespace Yatzee
 
     public void RollDice()
     {
-      Array.ForEach(Dice, RollIfNotHeld);
-      Roll += 1;
+      if (Roll < 3)
+      {
+        Array.ForEach(Dice, RollIfNotHeld);
+        Roll += 1;
+      }
+      else
+      {
+        MessageBox.Show("You must score your hand of dice after the third roll.");
+      }
+    }
+
+    public void ClearDiceHolds(Die[] dice)
+    {
+      Array.ForEach(dice, die =>
+      {
+        die.Hold = false;
+      });
     }
 
     public void RollIfNotHeld(Die d)
@@ -78,14 +93,18 @@ namespace Yatzee
 
     public ICommand ScoreCommand => new ParameterCommand<string>(ScoreDice);
 
-    public void ScoreDice(string option)
+    public void ScoreDice(string category)
     {
       int[] dieValues = Dice.Select(x => x.Value).ToArray();
-      int score = Scoring.ScoreOptions[option](dieValues);
-      ScoreCard.Add(new ScoreItem(option, score, 1));
+      var categoryItem = Scoring.ScoreCategories.First(x => x.Name == category);
+      int score = categoryItem.ScoreFunc(dieValues);
+      int rank = categoryItem.Rank;
+      ScoreCard.Add(new ScoreItem(category, score, rank));
+      ClearDiceHolds(this.Dice);
+      Roll = 0;
     }
 
-    public void notifyOptionsAvailable(object sender, NotifyCollectionChangedEventArgs e) => OnPropertyChanged(nameof(OptionsAvailable));
+    public void notifyOptionsAvailable(object sender, NotifyCollectionChangedEventArgs e) => OnPropertyChanged(nameof(CategoriesAvailable));
 
   }
 }

@@ -54,6 +54,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="CategoryItem.cs" />
     <Compile Include="DelegateCommand.cs" />
     <Compile Include="Die.cs" />
     <Compile Include="HoldToStringConverter.cs" />

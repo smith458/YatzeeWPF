@@ -26,7 +26,8 @@ namespace Yatzee
       get => _value;
       set
       {
-        _value = value > 0 && value <= 6 ? value : _value;
+        if (value == _value) return;
+        _value = value;
         OnPropertyChanged();
       } 
     }
