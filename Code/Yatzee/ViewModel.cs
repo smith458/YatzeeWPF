@@ -15,6 +15,7 @@ namespace Yatzee
     private Random _rand;
     private int _roll;
     private ObservableCollection<ScoreItem> _scoreCard = new ObservableCollection<ScoreItem>();
+    private int _score;
 
     public Die[] Dice
     {
@@ -47,6 +48,16 @@ namespace Yatzee
       }
     }
 
+    public int Score
+    {
+      get => _score;
+      set
+      {
+        _score = value;
+        OnPropertyChanged(nameof(Score));
+      }
+    }
+
     public IEnumerable<string> CategoriesAvailable =>
       Scoring.ScoreCategories.Select(x => x.Name).Except(ScoreCard.Select(x => x.Name).ToArray());
 
@@ -55,6 +66,7 @@ namespace Yatzee
       Dice = Dice.Select((d, i) => new Die(0)).ToArray();
       _rand = new Random();
       Roll = 0;
+      Score = 0;
       _scoreCard.CollectionChanged += notifyOptionsAvailable;
     }
 
@@ -78,10 +90,11 @@ namespace Yatzee
       }
     }
 
-    public void ClearDiceHolds(Die[] dice)
+    public void ResetDice(Die[] dice)
     {
       Array.ForEach(dice, die =>
       {
+        die.Value = 0;
         die.Hold = false;
       });
     }
@@ -100,8 +113,9 @@ namespace Yatzee
       int score = categoryItem.ScoreFunc(dieValues);
       int rank = categoryItem.Rank;
       ScoreCard.Add(new ScoreItem(category, score, rank));
-      ClearDiceHolds(this.Dice);
+      ResetDice(this.Dice);
       Roll = 0;
+      Score += score;
     }
 
     public void notifyOptionsAvailable(object sender, NotifyCollectionChangedEventArgs e) => OnPropertyChanged(nameof(CategoriesAvailable));
