@@ -56,9 +56,10 @@ namespace Yatzee
     {
       bool straight = true;
       int[] uniqueValues = dieValues.Distinct().ToArray();
+      Array.Sort(uniqueValues);
       if (uniqueValues.Length == 4)
       {
-        for (int x = 1; x < dieValues.Length; x++)
+        for (int x = 1; x < uniqueValues.Length; x++)
         {
           straight = straight && (uniqueValues[x] - uniqueValues[x - 1] == 1);
         }
@@ -66,15 +67,15 @@ namespace Yatzee
       else if (uniqueValues.Length == 5)
       {
         bool straightLow = true;
-        for (int x = 1; x < dieValues.Length - 1; x++)
+        for (int x = 1; x < uniqueValues.Length - 1; x++)
         {
-          straightLow = straightLow && (dieValues[x] - dieValues[x - 1] == 1);
+          straightLow = straightLow && (uniqueValues[x] - uniqueValues[x - 1] == 1);
         }
 
         bool straightHigh = true;
-        for (int x = 2; x < dieValues.Length; x++)
+        for (int x = 2; x < uniqueValues.Length; x++)
         {
-          straightHigh = straightHigh && (dieValues[x] - dieValues[x - 1] == 1);
+          straightHigh = straightHigh && (uniqueValues[x] - uniqueValues[x - 1] == 1);
         }
 
         straight = (straightHigh || straightLow);
