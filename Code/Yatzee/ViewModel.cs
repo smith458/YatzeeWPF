@@ -12,10 +12,11 @@ namespace Yatzee
   public class ViewModel : ObservableObject
   {
     private Die[] _dice = new Die[5];
-    private Random _rand;
+    private readonly Random _rand;
     private int _roll;
     private ObservableCollection<ScoreItem> _scoreCard = new ObservableCollection<ScoreItem>();
     private int _score;
+    private string _errorText;
 
     public Die[] Dice
     {
@@ -58,6 +59,16 @@ namespace Yatzee
       }
     }
 
+    public string ErrorText
+    {
+      get => _errorText;
+      set
+      {
+        _errorText = value;
+        OnPropertyChanged(nameof(ErrorText));
+      }
+    }
+
     public IEnumerable<string> CategoriesAvailable =>
       Scoring.ScoreCategories.Select(x => x.Name).Except(ScoreCard.Select(x => x.Name).ToArray());
 
@@ -67,7 +78,7 @@ namespace Yatzee
       _rand = new Random();
       Roll = 0;
       Score = 0;
-      _scoreCard.CollectionChanged += notifyOptionsAvailable;
+      _scoreCard.CollectionChanged += updateCategoriesAvailable;
     }
 
     private int randDieVal()
@@ -83,10 +94,11 @@ namespace Yatzee
       {
         Array.ForEach(Dice, RollIfNotHeld);
         Roll += 1;
+        ErrorText = "";
       }
       else
       {
-        MessageBox.Show("You must score your hand of dice after the third roll.");
+        ErrorText = "You must score your hand of dice after the third roll.";
       }
     }
 
@@ -108,6 +120,13 @@ namespace Yatzee
 
     public void ScoreDice(string category)
     {
+      if (Roll == 0)
+      {
+        ErrorText = "You cannot score before rolling!";
+        return;
+      }
+
+      ErrorText = "";
       int[] dieValues = Dice.Select(x => x.Value).ToArray();
       var categoryItem = Scoring.ScoreCategories.First(x => x.Name == category);
       int score = categoryItem.ScoreFunc(dieValues);
@@ -116,9 +135,19 @@ namespace Yatzee
       ResetDice(this.Dice);
       Roll = 0;
       Score += score;
+
+      if (!CategoriesAvailable.Any())
+      {
+        EndGame();
+      }
     }
 
-    public void notifyOptionsAvailable(object sender, NotifyCollectionChangedEventArgs e) => OnPropertyChanged(nameof(CategoriesAvailable));
+    private void EndGame()
+    {
+      MessageBox.Show($"Game Over!\nYour Score: {Score}");
+    }
+
+    public void updateCategoriesAvailable(object sender, NotifyCollectionChangedEventArgs e) => OnPropertyChanged(nameof(CategoriesAvailable));
 
   }
 }
