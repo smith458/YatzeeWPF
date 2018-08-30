@@ -81,11 +81,6 @@ namespace Yatzee
       _scoreCard.CollectionChanged += updateCategoriesAvailable;
     }
 
-    private int randDieVal()
-    {
-      return _rand.Next(1, 7);
-    }
-
     public ICommand RollCommand => new DelegateCommand(RollDice);
 
     public void RollDice()
@@ -102,18 +97,14 @@ namespace Yatzee
       }
     }
 
-    public void ResetDice(Die[] dice)
-    {
-      Array.ForEach(dice, die =>
-      {
-        die.Value = 0;
-        die.Hold = false;
-      });
-    }
-
     public void RollIfNotHeld(Die d)
     {
       d.Value = d.Hold ? d.Value : randDieVal();
+    }
+
+    private int randDieVal()
+    {
+      return _rand.Next(1, 7);
     }
 
     public ICommand ScoreCommand => new ParameterCommand<string>(ScoreDice);
@@ -131,15 +122,49 @@ namespace Yatzee
       var categoryItem = Scoring.ScoreCategories.First(x => x.Name == category);
       int score = categoryItem.ScoreFunc(dieValues);
       int rank = categoryItem.Rank;
+
+      // Handle extra yatzee
+      if (category == "Yatzee" && score == 50)
+      {
+        if (ScoreCard.Any(x => x.Name == "Yatzee 1"))
+        {
+          score = 100;
+        }
+        else
+        {
+          category = "Yatzee 1";
+        }
+      }
+
       ScoreCard.Add(new ScoreItem(category, score, rank));
       ResetDice(this.Dice);
       Roll = 0;
-      Score += score;
+
+      if (!CategoriesAvailable.Intersect(Scoring.UpperCategories).Any())
+      {
+        int upperScore = ScoreCard.Where(x => Scoring.UpperCategories.Contains(x.Name))
+                                  .Select(x => x.Score).Sum();
+        if (upperScore >= 63)
+        {
+          ScoreCard.Add(new ScoreItem("Upper Bonus", 35, 13));
+        }
+      }
+
+      Score = ScoreCard.Select(x => x.Score).Sum();
 
       if (!CategoriesAvailable.Any())
       {
         EndGame();
       }
+    }
+
+    public void ResetDice(Die[] dice)
+    {
+      Array.ForEach(dice, die =>
+      {
+        die.Value = 0;
+        die.Hold = false;
+      });
     }
 
     private void EndGame()

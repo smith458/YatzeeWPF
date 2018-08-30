@@ -19,7 +19,7 @@ namespace Yatzee
       new CategoryItem("Threes", SumDieValue(3), 2 ),
       new CategoryItem("Fours", SumDieValue(4), 3 ),
       new CategoryItem("Fives", SumDieValue(5), 4 ),
-      new CategoryItem("Sixs", SumDieValue(6), 5 ),
+      new CategoryItem("Sixes", SumDieValue(6), 5 ),
       new CategoryItem("Three of a Kind", ScoreOfAKind(3), 6 ),
       new CategoryItem("Four of a Kind", ScoreOfAKind(4), 7 ),
       new CategoryItem("Small Straight", ScoreSmallStraight, 8 ),
@@ -28,6 +28,16 @@ namespace Yatzee
       new CategoryItem("Yatzee", ScoreYatzee, 11 ),
       new CategoryItem("Chance", SumDie, 12 ),
 
+    };
+
+    public static readonly string[] UpperCategories = new string[]
+    {
+      "Ones",
+      "Twos",
+      "Threes",
+      "Fours",
+      "Fives",
+      "Sixes"
     };
 
     public static ScoringFunc SumDieValue(int val)
