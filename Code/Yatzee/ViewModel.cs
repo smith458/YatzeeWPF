@@ -140,7 +140,7 @@ namespace Yatzee
       ResetDice(this.Dice);
       Roll = 0;
 
-      if (!CategoriesAvailable.Intersect(Scoring.UpperCategories).Any())
+      if (!CategoriesAvailable.Any(x => Scoring.UpperCategories.Contains(x)) && !ScoreCard.Any(x => x.Name == "Upper Bonus"))
       {
         int upperScore = ScoreCard.Where(x => Scoring.UpperCategories.Contains(x.Name))
                                   .Select(x => x.Score).Sum();
