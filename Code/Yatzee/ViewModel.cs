@@ -3,14 +3,19 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using MahApps.Metro.Controls;
 using Yatzee.Annotations;
+using MahApps.Metro.Controls.Dialogs;
 
 namespace Yatzee
 {
   public class ViewModel : ObservableObject
   {
+    private const int NUM_ROLLS = 3;
+
     private Die[] _dice = new Die[5];
     private readonly Random _rand;
     private int _roll;
@@ -85,7 +90,7 @@ namespace Yatzee
 
     public void RollDice()
     {
-      if (Roll < 3)
+      if (Roll < NUM_ROLLS)
       {
         Array.ForEach(Dice, RollIfNotHeld);
         Roll += 1;
@@ -144,9 +149,9 @@ namespace Yatzee
       {
         int upperScore = ScoreCard.Where(x => Scoring.UpperCategories.Contains(x.Name))
                                   .Select(x => x.Score).Sum();
-        if (upperScore >= 63)
+        if (upperScore >= Scoring.UPPER_SCORE_FOR_BONUS)
         {
-          ScoreCard.Add(new ScoreItem("Upper Bonus", 35, 13));
+          ScoreCard.Add(new ScoreItem("Upper Bonus", Scoring.UPPER_BONUS, 13));
         }
       }
 
@@ -154,7 +159,7 @@ namespace Yatzee
 
       if (!CategoriesAvailable.Any())
       {
-        EndGame();
+        EndGameDialog();
       }
     }
 
@@ -167,9 +172,20 @@ namespace Yatzee
       });
     }
 
-    private void EndGame()
+    private async Task EndGameDialog()
     {
-      MessageBox.Show($"Game Over!\nYour Score: {Score}");
+      var dc = DialogCoordinator.Instance;
+      var window = Application.Current.MainWindow as MetroWindow;
+      var result = await window.ShowMessageAsync("Game Over", $"Your Score: {Score}\nWould you like to play another game?", MessageDialogStyle.AffirmativeAndNegative);
+      if (result == MessageDialogResult.Affirmative)
+      {
+        ResetDice(Dice);
+        ScoreCard.Clear();
+      }
+      else
+      {
+        Application.Current.Shutdown();
+      }
     }
 
     public void updateCategoriesAvailable(object sender, NotifyCollectionChangedEventArgs e) => OnPropertyChanged(nameof(CategoriesAvailable));

@@ -12,6 +12,9 @@ namespace Yatzee
 
   public static class Scoring
   {
+    public const int UPPER_SCORE_FOR_BONUS = 63;
+    public const int UPPER_BONUS = 35;
+
     public static readonly CategoryItem[] ScoreCategories = new CategoryItem[]
     {
       new CategoryItem("Ones", SumDieValue(1), 0),

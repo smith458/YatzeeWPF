@@ -9,7 +9,7 @@
         xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         d:DataContext="{d:DesignInstance {x:Type local:ViewModel}, IsDesignTimeCreatable=True}"
         mc:Ignorable="d"
-        Title="MainWindow" Height="500" Width="660">
+        Title="Yatzee" Height="500" Width="660">
   <Window.Resources>
     <local:HoldToStringConverter x:Key="HoldConverter" />
     <CollectionViewSource Source="{Binding ScoreCard}" x:Key="scores">
